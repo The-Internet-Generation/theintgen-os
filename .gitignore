@@ -1,10 +1,9 @@
-# macOS
+# macOS system files
 .DS_Store
-Icon?
-Icon[?]
 ._*
 **/.DS_Store
-**/Icon?
+**/._*
+Icon?
 
 # Editor
 .vscode/
