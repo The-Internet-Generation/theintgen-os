@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TIG OS — The Internet Generation</title>
+<meta name="description" content="TIG OS — a fictional retro phone that is the homepage for The Internet Generation, Chennai's creative community." />
+<link rel="icon" type="image/png" href="/public/assets/logo-theintgen.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+/* ===================================================================
+   TIG OS — Hi-Fi  ·  The Internet Generation
+   A fictional phone that IS the homepage. Polished retro-OS treatment.
+   =================================================================== */
+
+:root{
+  /* surfaces */
+  --cream:#f4f0e8;
+  --cream-2:#ebe6da;
+  --cream-3:#ddd6c6;
+  --paper-line:#cfc7b4;
+
+  /* ink / chrome */
+  --ink:#15140f;
+  --ink-2:#201e16;
+  --ink-3:#2b291e;
+  --ink-line:#3a382c;
+
+  /* brand */
+  --red:#d8412c;
+  --red-deep:#b6331e;
+  --orange:#ffb261;
+  --orange-deep:#f29a3c;
+
+  /* brand logo tile — deep blue on yellow */
+  --tig-yellow:#ffce2e;
+  --tig-yellow-2:#f7b500;
+  --tig-blue:#17266b;
+
+  /* harmonious secondary fills (oklch, shared L/C, varied hue) */
+  --teal:oklch(0.46 0.07 178);
+  --plum:oklch(0.46 0.07 318);
+
+  /* text */
+  --tx:#23211a;
+  --tx-soft:#6f6a5c;
+  --tx-faint:#9a9484;
+  --on-ink:#f1ede3;
+  --on-ink-soft:#b3ae9f;
+
+  /* accent */
+  --accent:var(--red);
+
+  --ui:"Space Grotesk",system-ui,sans-serif;
+  --mono:"Space Mono",ui-monospace,monospace;
+  --hand:"Caveat",cursive;
+
+  --radius-tile:15px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{
+  background:
+    radial-gradient(120% 90% at 50% -10%, #2a2820 0%, #1a1813 42%, #100f0b 100%);
+  font-family:var(--ui);
+  color:var(--on-ink);
+  -webkit-font-smoothing:antialiased;
+  min-height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+/* ---------------- phone frame ---------------- */
+.deck{flex:1;width:100%;display:grid;place-items:center;padding:40px 0 60px;}
+.device{
+  position:relative;width:360px;flex:none;
+  background:linear-gradient(150deg,#222019,#121109);
+  border-radius:46px;padding:13px 13px 13px;
+  box-shadow:
+    0 2px 1px rgba(255,255,255,.06) inset,
+    0 -2px 2px rgba(0,0,0,.6) inset,
+    0 40px 80px -30px rgba(0,0,0,.85),
+    0 8px 30px -12px rgba(0,0,0,.6);
+}
+.device::before{ /* speaker slit */
+  content:"";position:absolute;top:7px;left:50%;transform:translateX(-50%);
+  width:54px;height:5px;border-radius:4px;
+  background:linear-gradient(#0c0b07,#1c1a13);
+  box-shadow:0 1px 0 rgba(255,255,255,.05);
+}
+.device::after{ /* tiny camera */
+  content:"";position:absolute;top:7px;left:calc(50% + 42px);
+  width:6px;height:6px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#3b4a52,#0a0a08 70%);
+}
+.screen{
+  position:relative;width:334px;height:680px;border-radius:34px;overflow:hidden;
+  background:var(--cream);
+  box-shadow:0 0 0 2px #000, 0 0 0 3px rgba(255,255,255,.04);
+  display:flex;flex-direction:column;
+}
+.viewport{position:absolute;inset:0;overflow:hidden;}
+
+/* soft-keys built into the bezel bottom */
+.softrow{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 40px 4px;
+}
+.softrow button{
+  -webkit-appearance:none;appearance:none;background:none;border:none;cursor:pointer;
+  width:30px;height:26px;display:grid;place-items:center;border-radius:8px;color:#5b5849;
+  transition:.15s;
+}
+.softrow button:hover{color:var(--orange);background:rgba(255,255,255,.04);}
+.softrow button:active{transform:scale(.9);}
+.softrow svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ---------------- screen base ---------------- */
+.fade-up{animation:riseIn .42s cubic-bezier(.2,.7,.3,1) both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+/* entrance for tap-triggered overlays — transform only so content is never left invisible */
+@keyframes riseIn{from{transform:translateY(14px);}to{transform:none;}}
+
+/* ================= LOCK SCREEN ================= */
+.lock{position:absolute;inset:0;color:var(--on-ink);overflow:hidden;cursor:pointer;}
+.lock-bg{position:absolute;inset:0;background:
+  radial-gradient(90% 70% at 50% 22%, #322f24 0%, #1c1a13 55%, #0d0c08 100%);}
+.lock-imp{position:absolute;left:50%;top:47%;transform:translate(-50%,-50%);
+  width:80px;height:80px;image-rendering:pixelated;opacity:1;filter:saturate(1.05) drop-shadow(0 10px 16px rgba(0,0,0,.55));
+  animation:baneBob 3.2s ease-in-out infinite;}
+@keyframes baneBob{0%,100%{transform:translate(-50%,-50%);}50%{transform:translate(-50%,calc(-50% - 9px));}}
+.lock-grain{position:absolute;inset:0;opacity:.5;mix-blend-mode:overlay;
+  background-image:radial-gradient(rgba(255,255,255,.10) .6px,transparent .6px);background-size:3px 3px;}
+.lock-inner{position:relative;height:100%;display:flex;flex-direction:column;padding:30px 26px 26px;}
+
+.lock-top{text-align:center;margin-top:24px;}
+.lock-date{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--on-ink-soft);}
+.lock-time{font-family:var(--ui);font-weight:300;font-size:86px;line-height:.9;letter-spacing:-.03em;color:#fff;margin-top:4px;}
+.lock-os{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;}
+.lock-os .dot{width:5px;height:5px;border-radius:50%;background:var(--orange);}
+.lock-os span{font-family:var(--mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--on-ink-soft);}
+
+.notif-stack{margin-top:auto;display:flex;flex-direction:column;gap:9px;}
+.notif{
+  display:flex;gap:11px;align-items:center;
+  background:rgba(244,240,232,.10);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(244,240,232,.14);border-radius:17px;padding:11px 12px;
+  cursor:pointer;transition:.18s;
+}
+.notif:hover{background:rgba(244,240,232,.16);transform:translateY(-1px);}
+.notif .nicon{width:36px;height:36px;border-radius:10px;flex:none;display:grid;place-items:center;}
+.notif .nicon svg{width:19px;height:19px;}
+.notif .nbody{flex:1;min-width:0;}
+.notif .nsrc{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+.notif .nsrc b{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#fff;font-weight:400;}
+.notif .nsrc time{font-family:var(--mono);font-size:9px;color:var(--on-ink-soft);}
+.notif .ntext{font-family:var(--ui);font-size:13.5px;font-weight:500;color:#f3efe6;line-height:1.2;margin-top:3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+.lock-unlock{margin-top:18px;display:flex;flex-direction:column;align-items:center;gap:9px;}
+.lock-pill{width:118px;height:5px;border-radius:5px;background:rgba(255,255,255,.5);}
+.lock-hint{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--on-ink-soft);
+  animation:floaty 2.4s ease-in-out infinite;}
+@keyframes floaty{0%,100%{transform:translateY(0);opacity:.7;}50%{transform:translateY(-4px);opacity:1;}}
+
+/* ================= HOME ================= */
+.home{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--cream);}
+.home-bg{position:absolute;inset:0;background:
+  radial-gradient(120% 60% at 50% 0%, var(--cream) 0%, var(--cream-2) 70%, var(--cream-3) 100%);}
+.home-scroll{position:relative;flex:1;overflow-y:auto;overflow-x:hidden;padding:22px 18px 8px;-webkit-overflow-scrolling:touch;}
+.home-scroll::-webkit-scrollbar{width:0;}
+
+.home-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.home-greet .g1{font-family:var(--ui);font-weight:600;font-size:22px;letter-spacing:-.02em;color:var(--tx);line-height:1.08;}
+.home-greet .g2{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx-soft);margin-top:5px;}
+.home-search{width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid var(--paper-line);
+  display:grid;place-items:center;box-shadow:0 2px 8px -4px rgba(0,0,0,.2);}
+.home-search svg{width:18px;height:18px;fill:none;stroke:var(--tx-soft);stroke-width:2;stroke-linecap:round;}
+
+/* hero campaign card */
+.hero{
+  position:relative;border-radius:22px;overflow:hidden;padding:18px;cursor:pointer;
+  background:linear-gradient(150deg,var(--ink-3),var(--ink));
+  color:var(--on-ink);box-shadow:0 16px 30px -18px rgba(0,0,0,.6);
+  isolation:isolate;
+}
+.hero-imp{position:absolute;right:-22px;bottom:-26px;width:150px;height:150px;image-rendering:pixelated;opacity:.9;z-index:-1;}
+.hero .kicker{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);}
+.hero h3{font-family:var(--ui);font-weight:600;font-size:21px;line-height:1.05;letter-spacing:-.01em;margin-top:8px;max-width:78%;}
+.hero p{font-family:var(--ui);font-size:12.5px;color:var(--on-ink-soft);margin-top:7px;max-width:74%;line-height:1.35;}
+.hero .cta{display:inline-flex;align-items:center;gap:6px;margin-top:14px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;
+  background:var(--accent);color:#fff;border-radius:30px;padding:9px 15px;font-weight:700;}
+
+/* section label */
+.sec{display:flex;align-items:baseline;justify-content:space-between;margin:22px 2px 12px;}
+.sec h4{font-family:var(--ui);font-weight:600;font-size:14px;letter-spacing:-.01em;color:var(--tx);}
+.sec a{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx-soft);text-decoration:none;}
+
+/* app grid */
+.appgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 8px;}
+.appgrid.cols3{grid-template-columns:repeat(3,1fr);gap:18px 8px;}
+.app{display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;background:none;border:none;padding:0;}
+.app .tile{
+  position:relative;width:58px;height:58px;border-radius:17px;overflow:hidden;
+  display:grid;place-items:center;
+  box-shadow:0 6px 14px -8px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.5) inset;
+  transition:transform .15s;
+}
+.app:hover .tile{transform:translateY(-3px) scale(1.03);}
+.app:active .tile{transform:scale(.94);}
+.app .tile svg{width:27px;height:27px;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.app .tile .ext{position:absolute;top:6px;right:6px;width:13px;height:13px;border-radius:50%;
+  background:rgba(255,255,255,.85);display:grid;place-items:center;}
+.app .tile .ext svg{width:8px;height:8px;stroke:var(--ink);stroke-width:2.4;}
+.app span{font-family:var(--ui);font-size:11px;font-weight:500;color:var(--tx);text-align:center;line-height:1.05;}
+.app .sub{font-family:var(--mono);font-size:7.5px;letter-spacing:.04em;color:var(--tx-faint);text-transform:uppercase;}
+
+/* tile fills */
+.fill-ink{background:linear-gradient(155deg,var(--ink-3),var(--ink));}
+.fill-red{background:linear-gradient(155deg,#e2543f,var(--red));}
+.fill-orange{background:linear-gradient(155deg,#ffc07d,var(--orange-deep));}
+.fill-cream{background:linear-gradient(155deg,#fff,var(--cream-3));}
+.fill-teal{background:linear-gradient(155deg,oklch(0.54 0.07 178),var(--teal));}
+.fill-plum{background:linear-gradient(155deg,oklch(0.54 0.07 318),var(--plum));}
+
+/* brand logo tiles — deep blue mark on yellow */
+.fill-logo{background:linear-gradient(157deg,var(--tig-yellow) 0%,var(--tig-yellow-2) 100%);
+  box-shadow:0 6px 16px -8px rgba(247,181,0,.7),inset 0 1px 0 rgba(255,255,255,.5);}
+.app .tile .tlogo{width:74%;height:74%;object-fit:contain;
+  filter:drop-shadow(0 1px 0 rgba(255,255,255,.35));}
+.app .tile .twordmark{font-family:var(--ui);font-weight:700;color:var(--tig-blue);
+  font-size:30px;line-height:1;letter-spacing:-.02em;}
+.app .tile .twordmark.small{font-size:13px;letter-spacing:.01em;font-weight:800;}
+
+/* live widgets */
+.wrow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.widget{
+  background:#fff;border:1px solid var(--paper-line);border-radius:18px;padding:13px;
+  box-shadow:0 8px 18px -14px rgba(0,0,0,.4);cursor:pointer;transition:.16s;
+}
+.widget:hover{transform:translateY(-2px);box-shadow:0 14px 24px -16px rgba(0,0,0,.45);}
+.widget .wlabel{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--tx-soft);}
+.widget .wlabel .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);}
+.widget h5{font-family:var(--ui);font-weight:600;font-size:13.5px;color:var(--tx);line-height:1.12;letter-spacing:-.01em;}
+.widget .meta{font-family:var(--mono);font-size:9.5px;color:var(--tx-soft);margin-top:6px;display:flex;gap:7px;align-items:center;}
+
+/* image placeholder (striped) */
+.ph{position:relative;background:
+  repeating-linear-gradient(135deg, var(--cream-2) 0 8px, var(--cream-3) 8px 16px);}
+.ph.dark{background:repeating-linear-gradient(135deg,#26241b 0 8px,#1c1a13 8px 16px);}
+.ph .ph-tag{position:absolute;left:8px;bottom:7px;font-family:var(--mono);font-size:8px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--tx-soft);background:rgba(255,255,255,.72);padding:2px 6px;border-radius:5px;}
+.ph.dark .ph-tag{color:var(--on-ink-soft);background:rgba(0,0,0,.4);}
+
+/* dock */
+.dock{position:relative;flex:none;margin:0 12px 12px;background:rgba(21,20,15,.92);
+  backdrop-filter:blur(10px);border-radius:22px;display:flex;justify-content:space-around;padding:11px 6px 9px;
+  box-shadow:0 14px 30px -16px rgba(0,0,0,.7);}
+.dock button{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--on-ink);}
+.dock .di{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.07);display:grid;place-items:center;transition:.15s;}
+.dock button:hover .di{background:rgba(255,178,97,.18);}
+.dock .di svg{width:20px;height:20px;fill:none;stroke:var(--on-ink);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.dock span{font-family:var(--mono);font-size:8px;letter-spacing:.06em;text-transform:uppercase;color:var(--on-ink-soft);}
+
+/* ================= APP INTERIOR ================= */
+.interior{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--cream);}
+.ihead{flex:none;position:relative;color:var(--on-ink);padding:18px 16px 16px;}
+.ihead .row{display:flex;align-items:center;gap:12px;}
+.iback{width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.14);
+  display:grid;place-items:center;cursor:pointer;flex:none;}
+.iback svg{width:17px;height:17px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.ihead .titles{flex:1;min-width:0;}
+.ihead .titles h2{font-family:var(--ui);font-weight:600;font-size:19px;letter-spacing:-.01em;color:#fff;line-height:1;}
+.ihead .titles p{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--on-ink-soft);margin-top:5px;}
+.iweb{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;
+  text-transform:uppercase;background:transparent;border:1px solid rgba(255,255,255,.3);border-radius:30px;padding:7px 11px;color:#fff;cursor:pointer;flex:none;}
+.iweb svg{width:11px;height:11px;stroke:currentColor;stroke-width:2;fill:none;}
+.ihead .blurb{font-family:var(--ui);font-size:13px;color:var(--on-ink-soft);line-height:1.4;margin-top:14px;max-width:94%;}
+
+.ibody{flex:1;overflow-y:auto;overflow-x:hidden;padding:18px 16px 24px;}
+.ibody::-webkit-scrollbar{width:0;}
+
+/* generic content blocks */
+.isec{font-family:var(--ui);font-weight:600;font-size:14px;color:var(--tx);letter-spacing:-.01em;margin:22px 2px 11px;display:flex;justify-content:space-between;align-items:baseline;}
+.isec:first-child{margin-top:2px;}
+.isec small{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--tx-faint);font-weight:400;}
+
+.card{background:#fff;border:1px solid var(--paper-line);border-radius:18px;overflow:hidden;
+  box-shadow:0 8px 18px -14px rgba(0,0,0,.35);}
+.card-pad{padding:14px;}
+
+.btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;
+  text-transform:uppercase;font-weight:700;border-radius:30px;padding:11px 17px;border:none;cursor:pointer;}
+.btn.solid{background:var(--accent);color:#fff;}
+.btn.ink{background:var(--ink);color:#fff;}
+.btn.ghost{background:transparent;border:1.5px solid var(--paper-line);color:var(--tx);}
+.btn.full{display:flex;justify-content:center;width:100%;}
+
+.chiprow{display:flex;gap:7px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px;}
+.chiprow::-webkit-scrollbar{height:0;}
+.chip{font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;
+  border:1.5px solid var(--paper-line);border-radius:30px;padding:7px 13px;color:var(--tx-soft);background:#fff;cursor:pointer;}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+.tag{font-family:var(--mono);font-size:8.5px;letter-spacing:.05em;text-transform:uppercase;
+  border-radius:20px;padding:4px 9px;background:var(--cream-2);color:var(--tx-soft);}
+.tag.accent{background:color-mix(in srgb,var(--accent) 16%,#fff);color:var(--red-deep);}
+
+/* listing rows */
+.lrow{display:flex;gap:12px;align-items:center;padding:13px 14px;background:#fff;border:1px solid var(--paper-line);
+  border-radius:16px;cursor:pointer;transition:.15s;box-shadow:0 6px 14px -14px rgba(0,0,0,.4);}
+.lrow:hover{transform:translateY(-2px);}
+.lrow .lthumb{width:50px;height:50px;border-radius:12px;flex:none;overflow:hidden;display:grid;place-items:center;}
+.lrow .lthumb svg{width:22px;height:22px;}
+.lrow .lmid{flex:1;min-width:0;}
+.lrow .lmid h6{font-family:var(--ui);font-weight:600;font-size:13.5px;color:var(--tx);line-height:1.15;letter-spacing:-.01em;}
+.lrow .lmid p{font-family:var(--mono);font-size:9.5px;color:var(--tx-soft);margin-top:5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.lrow .larrow{color:var(--tx-faint);flex:none;}
+.lrow .larrow svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;}
+
+.stack{display:flex;flex-direction:column;gap:11px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* stat / hero numbers */
+.bignum{font-family:var(--ui);font-weight:600;font-size:46px;letter-spacing:-.03em;line-height:.85;color:#fff;}
+.statcard{background:linear-gradient(150deg,var(--ink-3),var(--ink));border-radius:20px;padding:18px;color:#fff;position:relative;overflow:hidden;}
+
+/* plan card */
+.plan{background:#fff;border:1.5px solid var(--paper-line);border-radius:18px;padding:15px;display:flex;flex-direction:column;gap:9px;}
+.plan.feature{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent), 0 12px 24px -16px rgba(0,0,0,.4);}
+.plan .pname{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx-soft);}
+.plan .pprice{font-family:var(--ui);font-weight:600;font-size:26px;color:var(--tx);letter-spacing:-.02em;}
+.plan .pprice small{font-family:var(--mono);font-size:10px;color:var(--tx-soft);font-weight:400;letter-spacing:0;}
+.plan ul{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.plan li{font-family:var(--ui);font-size:11.5px;color:var(--tx-soft);display:flex;gap:7px;align-items:flex-start;line-height:1.25;}
+.plan li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--accent);margin-top:6px;flex:none;}
+
+/* member spotlight card */
+.spotlight{min-width:172px;background:#fff;border:1px solid var(--paper-line);border-radius:18px;overflow:hidden;
+  box-shadow:0 8px 18px -14px rgba(0,0,0,.35);}
+.hscroll{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -16px;padding-left:16px;padding-right:16px;}
+.hscroll::-webkit-scrollbar{height:0;}
+
+/* ================= WEBSITE OVERLAY ================= */
+.weblayer{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;background:radial-gradient(90% 70% at 50% 30%,#262318,#13110c);color:var(--on-ink);
+  animation:riseIn .3s ease both;}
+.weblayer .wl-imp{width:96px;height:96px;image-rendering:pixelated;animation:bob 1.1s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
+.weblayer .wl-name{font-family:var(--ui);font-weight:600;font-size:22px;color:#fff;letter-spacing:-.01em;}
+.weblayer .wl-url{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--orange);}
+.weblayer .wl-hint{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--on-ink-soft);
+  display:flex;align-items:center;gap:8px;margin-top:4px;}
+.spinner{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.2);border-top-color:var(--orange);
+  animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.weblayer .wl-close{margin-top:10px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--on-ink-soft);border:1px solid var(--ink-line);border-radius:30px;padding:8px 14px;cursor:pointer;background:none;}
+
+/* ================= SOCIALS OVERLAY ================= */
+.socials{position:absolute;inset:0;z-index:28;display:flex;flex-direction:column;
+  background:radial-gradient(120% 60% at 50% 0%, var(--cream) 0%, var(--cream-2) 70%, var(--cream-3) 100%);
+  animation:riseIn .32s cubic-bezier(.2,.7,.3,1) both;}
+.soc-head{flex:none;padding:20px 16px 16px;background:linear-gradient(165deg,#1c2a72,#11183f);
+  display:flex;align-items:center;gap:12px;border-bottom-left-radius:22px;border-bottom-right-radius:22px;
+  box-shadow:0 14px 30px -20px rgba(23,38,107,.9);}
+.soc-head .titles h2{font-family:var(--ui);font-weight:600;font-size:21px;color:#fff;letter-spacing:-.01em;line-height:1;}
+.soc-head .titles p{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#ffd23e;margin-top:6px;}
+.soc-list{flex:1;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:12px;}
+.soc-list::-webkit-scrollbar{width:0;}
+.soc-row{display:flex;align-items:center;gap:14px;text-decoration:none;
+  background:#fff;border:1px solid var(--paper-line);border-radius:18px;padding:16px 16px;
+  box-shadow:0 6px 16px -12px rgba(0,0,0,.3);transition:transform .15s,box-shadow .15s;}
+.soc-row:hover{transform:translateY(-2px);box-shadow:0 12px 24px -14px rgba(23,38,107,.5);}
+.soc-row:active{transform:scale(.985);}
+.soc-ic{width:50px;height:50px;border-radius:14px;flex:none;display:grid;place-items:center;
+  background:linear-gradient(157deg,var(--tig-yellow),var(--tig-yellow-2));}
+.soc-ic svg{width:26px;height:26px;fill:none;stroke:var(--tig-blue);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.soc-mid{flex:1;min-width:0;}
+.soc-mid h6{font-family:var(--ui);font-weight:600;font-size:15px;color:var(--tx);letter-spacing:-.01em;}
+.soc-mid p{font-family:var(--mono);font-size:10px;color:var(--tx-soft);margin-top:4px;}
+.soc-row .larrow{color:var(--tig-blue);flex:none;opacity:.55;}
+.soc-row .larrow svg{fill:none;stroke:currentColor;stroke-width:2;}
+
+/* ===== Hall of Fame (Our Work) ===== */
+.hof-banner{display:flex;align-items:center;gap:9px;margin-bottom:14px;
+  background:linear-gradient(157deg,var(--tig-yellow),var(--tig-yellow-2));
+  border-radius:14px;padding:11px 14px;box-shadow:0 6px 16px -10px rgba(247,181,0,.8);}
+.hof-banner span{font-family:var(--ui);font-weight:700;font-size:14px;color:var(--tig-blue);letter-spacing:-.01em;}
+.hof-banner small{font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:#7a5a00;margin-left:auto;text-align:right;max-width:46%;line-height:1.25;}
+.hof-card{position:relative;border:1px solid var(--tig-yellow-2);
+  box-shadow:0 14px 30px -18px rgba(247,181,0,.6);}
+.hof-medal{position:absolute;top:12px;left:12px;z-index:2;width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(157deg,var(--tig-yellow),var(--tig-yellow-2));display:grid;place-items:center;
+  box-shadow:0 4px 12px -4px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.6);
+  border:2px solid #fff;}
+
+/* responsive */
+@media (max-width:440px){
+  .deck{padding:0;}
+  .device{width:100vw;min-height:100vh;border-radius:0;padding:0;display:flex;flex-direction:column;justify-content:center;}
+  .device::before,.device::after{display:none;}
+  .screen{width:100%;max-width:420px;height:auto;flex:1;border-radius:0;margin:0 auto;}
+}
+</style>
+</head>
+<body>
+  <div class="deck">
+    <div id="app"></div>
+  </div>
+
+<script>
+(function(){
+"use strict";
+
+/* ===== tiny DOM helper (React.createElement-ish) ===== */
+var SVG_NS = "http://www.w3.org/2000/svg";
+var UNITLESS = {lineHeight:1,fontWeight:1,opacity:1,zIndex:1,flex:1,flexGrow:1,flexShrink:1,order:1};
+
+function setStyle(el, style){
+  for(var k in style){
+    var v = style[k];
+    if(typeof v === "number" && !UNITLESS[k]) v = v + "px";
+    el.style[k] = v;
+  }
+}
+function h(tag, props){
+  var el = document.createElement(tag);
+  props = props || {};
+  for(var key in props){
+    var val = props[key];
+    if(val == null || val === false) continue;
+    if(key === "className") el.className = val;
+    else if(key === "style") setStyle(el, val);
+    else if(key === "onClick") el.addEventListener("click", val);
+    else el.setAttribute(key, val);
+  }
+  for(var i=2;i<arguments.length;i++) append(el, arguments[i]);
+  return el;
+}
+function append(el, child){
+  if(child == null || child === false || child === true) return;
+  if(Array.isArray(child)){ child.forEach(function(c){ append(el, c); }); return; }
+  if(child.nodeType) el.appendChild(child);
+  else el.appendChild(document.createTextNode(String(child)));
+}
+
+/* ===== imp sprite (30x30, straight from the brand sprite) ===== */
+var IMP_GRID = [
+  '..............................',
+  '..............................',
+  '..............................',
+  '..............................',
+  '..............................',
+  '..............................',
+  '...DD......DDDDDD......DD......',
+  '..DDDD....DDDDDDDD....DDDD.....',
+  '.DDDDOD..DDDDDDDDDD..DODDDD....',
+  '.DDDODD.DDDDDDDDDDD..DDODDD....',
+  '..DODDODDDDDDWDDDDDDDODDOD.....',
+  '...DDOOODDDDWRWDDDWDOOODD......',
+  '....DOOODDDDWRRWDWRDOOOD.......',
+  '.....DOOODDDWRRRWRRDOOD........',
+  '......DOODDDDWWWWWWDOD.........',
+  '.......DOODDDDWWWWDOD..........',
+  '........DOODDDWWWDOD...........',
+  '........DOODODDDDDOD...........',
+  '........DOODOOOOODOD...........',
+  '.........DODOOOOODD............',
+  '.........DODDOOODDD............',
+  '.........DDDDDODDDD............',
+  '.........DGGGGRGGGD............',
+  '.........DDDDDDDDDD............',
+  '........DDDDDDDDDDDD...........',
+  '.......DDDDDDDDDDDDDD..........',
+  '......DDDDDDD..DDDDDDD.........',
+  '....DDDDDDDD....DDDDDDDD.......',
+  '...DDDDDDDDD....DDDDDDDDD......',
+  '...DDDDDDDDD....DDDDDDDDD......'
+];
+var IMP_COLORS = {D:'#2c2b2c',O:'#ffb261',W:'#fefcfc',R:'#ff0000',G:'#808080'};
+
+function impCanvas(scale, className){
+  var N = 30;
+  var canvas = document.createElement("canvas");
+  if(className) canvas.className = className;
+  canvas.width = N*scale; canvas.height = N*scale;
+  var ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = false;
+  for(var y=0;y<N;y++){
+    var row = IMP_GRID[y] || "";
+    for(var x=0;x<N;x++){
+      var col = IMP_COLORS[row[x]];
+      if(col){ ctx.fillStyle = col; ctx.fillRect(x*scale,y*scale,scale,scale); }
+    }
+  }
+  return canvas;
+}
+
+/* ===== line-icon set (24x24 stroke) ===== */
+var ICONS = {
+  megaphone:'M3 11v2a1 1 0 0 0 1 1h2l4 4V6L6 10H4a1 1 0 0 0-1 1Z M14 8c1.5 1 1.5 7 0 8 M17 6c2.5 2 2.5 10 0 12',
+  building:'M5 3h14v18H5Z M9 7h2 M13 7h2 M9 11h2 M13 11h2 M9 15h2 M13 15h2',
+  ticket:'M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2 2 2 0 0 0 0 4 2 2 0 0 1-2 2H6a2 2 0 0 1-2-2 2 2 0 0 0 0-4Z',
+  mic:'M9 3h6v11a3 3 0 0 1-6 0Z M6 11a6 6 0 0 0 12 0 M12 17v4 M9 21h6',
+  guitar:'M9 11a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z M11.5 14.5 18 8 M16 6l4 4-2 2-4-4Z',
+  pen:'M5 19h14 M7 15l8-8 3 3-8 8H7Z',
+  compass:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z m3 6-2 5-5 2 2-5 5-2Z',
+  scissors:'M7 4.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z M7 14.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z M9 9l11 9 M9 15 20 6',
+  list:'M9 7h11 M9 12h11 M9 17h7 M5 7h.01 M5 12h.01 M5 17h.01',
+  calendar:'M5 5h14v15H5Z M5 9h14 M9 3v4 M15 3v4 M9 13h2 M13 13h2',
+  people:'M9 6a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z M3 20a6 6 0 0 1 12 0 M17 7a3 3 0 0 1 0 6 M21 20a6 6 0 0 0-4-5.6',
+  star:'m12 3 2.6 5.6L20.5 9.4l-4.3 4 1 6L12 16.6 6.8 19.4l1-6-4.3-4 6-.8Z',
+  headphones:'M4 14v-1a8 8 0 0 1 16 0v1 M3.5 13.5h3.5v6.5H4a.5.5 0 0 1-.5-.5Z M17 13.5h3.5v6a.5.5 0 0 1-.5.5h-3Z',
+  briefcase:'M3 8h18v12H3Z M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2 M3 13h18',
+  trophy:'M8 4h8v5a4 4 0 0 1-8 0Z M8 5H5v2a3 3 0 0 0 3 3 M16 5h3v2a3 3 0 0 1-3 3 M10 14h4 M9 20h6 M12 14v6',
+  book:'M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2Z M5 18a2 2 0 0 1 2-2h11 M9 8h6',
+  grid:'M4 4h7v7H4Z M13 4h7v7h-7Z M4 13h7v7H4Z M13 13h7v7h-7Z',
+  quote:'M5 7h5v5a4 4 0 0 1-4 4 M14 7h5v5a4 4 0 0 1-4 4',
+  back:'M14 6l-6 6 6 6',
+  arrow:'M9 6l6 6-6 6',
+  play:'M8 6l11 6-11 6Z',
+  plus:'M12 5v14 M5 12h14',
+  search:'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14Z M20 20l-4-4',
+  info:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z M12 11v5 M12 8h.01',
+  mail:'M3 6h18v12H3Z m0 1 9 6 9-6',
+  ext:'M14 4h6v6 M20 4l-9 9 M9 6H5v13h14v-4',
+  clock:'M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16Z M12 8v4l3 2',
+  spotify:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z M7 10c4-1 7-.5 10 1 M7.5 13.5c3-.8 6-.3 8 1 M8 16.5c2.5-.6 4.5-.2 6 .8',
+  youtube:'M3 8a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3Z M11 9l5 3-5 3Z',
+  pin:'M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11Z M12 7.6a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8Z',
+  bolt:'M13 3 5 14h6l-1 7 8-11h-6Z',
+  home:'M4 11 12 4l8 7 M6 10v10h12V10',
+  menu:'M4 7h16 M4 12h16 M4 17h16',
+  linkedin:'M4 4h16v16H4Z M7 10v7 M7 7v.01 M11 17v-4a2 2 0 0 1 4 0v4 M11 10v7',
+  laptopcam:'M5 8h14v8H5Z M3 19h18l-1.5-3 M5 16l-1.5 3 M12 9.5a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8Z M15.5 8V6.4h2.6V8',
+  heart:'M12 20S4 14.5 4 9a4 4 0 0 1 8-1 4 4 0 0 1 8 1c0 5.5-8 11-8 11Z',
+  chat:'M4 5h16v11H10l-4 3v-3H4Z',
+  camera:'M3 8h4l1.5-3h7L18 8h3v11H3Z M12 12.5a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z'
+};
+
+function glyph(name, opts){
+  opts = opts || {};
+  var svg = document.createElementNS(SVG_NS, "svg");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("fill", opts.fill || "none");
+  svg.setAttribute("stroke", opts.stroke || "currentColor");
+  svg.setAttribute("stroke-width", "1.9");
+  svg.setAttribute("stroke-linecap", "round");
+  svg.setAttribute("stroke-linejoin", "round");
+  if(opts.style) setStyle(svg, opts.style);
+  var segs = (ICONS[name] || "").split(" M");
+  segs.forEach(function(seg, i){
+    var p = document.createElementNS(SVG_NS, "path");
+    p.setAttribute("d", i === 0 ? seg : "M" + seg);
+    svg.appendChild(p);
+  });
+  return svg;
+}
+
+/* ===== App icon tile ===== */
+function appIcon(app, label, onClick){
+  var inner;
+  if(app.logo) inner = h("img", {className:"tlogo", src:app.logo, alt:label});
+  else if(app.wordmark) inner = h("span", {className:"twordmark" + (app.wordmark.length>2 ? " small" : "")}, app.wordmark);
+  else inner = glyph(app.icon, {stroke:app.glyph});
+  return h("button", {className:"app", onClick:onClick},
+    h("div", {className:"tile " + (app.fill || "fill-logo")},
+      inner,
+      app.ext ? h("span", {className:"ext"}, glyph("ext", {stroke:"#15140f"})) : null
+    ),
+    h("span", null, label)
+  );
+}
+
+/* ===== app registry (barebones go-live set) ===== */
+var APPS = {
+  tigital:  {name:'Tigital',  sub:'Creative & digital agency', logo:'icons/tigital.png', fill:'fill-logo', ext:true, url:'/tigital/'},
+  hq:       {name:'TIG HQ',   sub:'Coworking · Chennai',  icon:'laptopcam', fill:'fill-logo', glyph:'#17266b', interior:'hq', headFrom:'#2c281c', headTo:'#15140f',
+             blurb:'A home base for Chennai’s creators — desks, studios and a room that’s always mid-collab.'},
+  tiggigs:  {name:'TigGigs',  sub:'Gigs that pay',            wordmark:'₹', fill:'fill-logo', ext:true, url:'/tiggigs/'},
+  tigpods:  {name:'Tigpods',  sub:'Podcast network',          logo:'icons/tigpods.png', fill:'fill-logo', ext:true, url:'/tigpods/'},
+  tigom:    {name:'TIGOM',    sub:'Open mic · live',      logo:'icons/tigom.png', fill:'fill-logo', ext:true, url:'/tigom/'},
+  ourwork:  {name:'Our Work', sub:'Hall of Fame',             icon:'trophy', fill:'fill-logo', glyph:'#17266b', interior:'ourwork', headFrom:'#3a2030', headTo:'#15140f',
+             blurb:'The campaigns, brand worlds and live moments our community is proudest of.'}
+};
+
+/* ===== state + navigation ===== */
+var state = {view:'lock', interiorId:null, web:null, socials:false};
+
+try{
+  var saved = JSON.parse(localStorage.getItem('tigos') || '{}');
+  if(saved.view) state.view = saved.view;
+  if(saved.interiorId) state.interiorId = saved.interiorId;
+}catch(e){}
+
+function persist(){
+  try{ localStorage.setItem('tigos', JSON.stringify({view:state.view, interiorId:state.interiorId})); }catch(e){}
+}
+function set(patch){ Object.assign(state, patch); persist(); render(); }
+
+function openApp(id){
+  var app = APPS[id]; if(!app) return;
+  if(app.ext){
+    if(app.url && app.url.charAt(0) === '/'){ window.location.href = app.url; return; }
+    set({web:app}); return;
+  }
+  if(app.interior){ set({interiorId:id}); return; }
+}
+function openWeb(app){ set({web:app}); }
+function unlock(){ set({view:'home'}); }
+function back(){
+  if(state.socials){ set({socials:false}); return; }
+  if(state.web){ set({web:null}); return; }
+  if(state.interiorId){ set({interiorId:null}); return; }
+  if(state.view === 'home'){ set({view:'lock'}); return; }
+}
+function goHome(){ set({socials:false, web:null, interiorId:null, view:'home'}); }
+
+/* ===== LOCK ===== */
+function Lock(){
+  var notifs = [
+    {icon:'mic',      fill:'fill-ink', glyph:'#ffb261', src:'Tigpods',     time:'now', text:'New episode is live on theintgen.com'},
+    {icon:'laptopcam',fill:'fill-ink', glyph:'#ffb261', src:'TIG HQ',      time:'1h',  text:'TIGHQ Launch is coming — date TBA soon'},
+    {icon:’megaphone’,fill:’fill-red’, glyph:’#fff’,    src:’Going viral’,  time:’3h’,  text:’DoorDash’s delivery bags started a podcast’}
+  ];
+  return h("div", {className:"lock", onClick:unlock},
+    h("div", {className:"lock-bg"}),
+    impCanvas(10, "lock-imp"),
+    h("div", {className:"lock-grain"}),
+    h("div", {className:"lock-inner"},
+      h("div", {className:"lock-top"},
+        h("div", {className:"lock-date"}, "Tue 3 June · Chennai"),
+        h("div", {className:"lock-time"}, "20:10"),
+        h("div", {className:"lock-os"},
+          h("span", {className:"dot"}),
+          h("span", null, "TIG OS · The Internet Generation"))
+      ),
+      h("div", {className:"notif-stack"},
+        notifs.map(function(n){
+          return h("div", {className:"notif", onClick:unlock},
+            h("div", {className:"nicon " + n.fill}, glyph(n.icon, {stroke:n.glyph})),
+            h("div", {className:"nbody"},
+              h("div", {className:"nsrc"}, h("b", null, n.src), h("time", null, n.time)),
+              h("div", {className:"ntext"}, n.text)));
+        })
+      ),
+      h("div", {className:"lock-unlock"},
+        h("div", {className:"lock-pill"}),
+        h("div", {className:"lock-hint"}, "Swipe up to open"))
+    )
+  );
+}
+
+/* ===== HOME ===== */
+function HomePage1(){
+  var ids = ['tigital','hq','tiggigs','tigpods','tigom','ourwork'];
+  return h("div", {className:"home-scroll"},
+    h("div", {className:"home-head"},
+      h("div", {className:"home-greet"},
+        h("div", {className:"g1"}, "Welcome to", h("br"), "The Internet Generation")),
+      h("button", {className:"home-search"}, glyph("search"))
+    ),
+    h("div", {className:"sec"}, h("h4", null, "The Tigiverse")),
+    h("div", {className:"appgrid cols3"},
+      ids.map(function(id){ return appIcon(APPS[id], APPS[id].name, function(){ openApp(id); }); })),
+    h("div", {className:"sec"}, h("h4", null, "Live now")),
+    h("div", {className:"wrow"},
+      h("div", {className:"widget", onClick:function(){ openApp('hq'); }},
+        h("div", {className:"wlabel"}, h("span", {className:"dot"}), "Next event"),
+        Ph(62, "TIG HQ", true, {borderRadius:11, margin:'10px 0'}),
+        h("h5", null, "TIGHQ Launch!"),
+        h("div", {className:"meta"}, glyph("pin", {style:{width:11,height:11}}), "Chennai · Date TBA soon")),
+      h("div", {className:"widget", onClick:function(){ openApp('tigpods'); }},
+        h("div", {className:"wlabel"}, h("span", {className:"dot"}), "Latest pod"),
+        Ph(62, "TigPods", false, {borderRadius:11, margin:'10px 0'}),
+        h("h5", null, "New on TigPods"),
+        h("div", {className:"meta"}, glyph("ext", {style:{width:11,height:11}}), "theintgen.com/tigpods"))
+    )
+  );
+}
+
+/* ===== shared interior bits ===== */
+function Ph(height, tag, dark, extraStyle){
+  var style = Object.assign({height:height}, extraStyle || {});
+  return h("div", {className:"ph" + (dark ? " dark" : ""), style:style},
+    tag ? h("span", {className:"ph-tag"}, tag) : null);
+}
+function IHead(app){
+  return h("div", {className:"ihead", style:{background:'linear-gradient(155deg,'+app.headFrom+','+app.headTo+')'}},
+    h("div", {className:"row"},
+      h("button", {className:"iback", "aria-label":"Back", onClick:function(){ set({interiorId:null}); }}, glyph("back")),
+      h("div", {className:"titles"},
+        h("h2", null, app.name),
+        h("p", null, app.sub)),
+      h("button", {className:"iweb", onClick:function(){ openWeb(app); }}, "Website", glyph("ext"))
+    ),
+    h("p", {className:"blurb"}, app.blurb)
+  );
+}
+function EventRow(icon, title, when, tagTxt, accent){
+  return h("div", {className:"lrow"},
+    h("div", {className:"lthumb fill-ink"}, glyph(icon, {stroke:'#ffb261'})),
+    h("div", {className:"lmid"},
+      h("h6", null, title),
+      h("p", null, glyph("clock", {style:{width:11,height:11}}), when)),
+    h("span", {className:"tag" + (accent ? " accent" : "")}, tagTxt)
+  );
+}
+
+/* ===== TIG HQ interior ===== */
+function HQBody(app){
+  return [
+    h("div", {className:"card", style:{marginBottom:4}},
+      Ph(150, "Photo · the floor", true),
+      h("div", {className:"card-pad", style:{display:'flex',justifyContent:'space-between',alignItems:'center'}},
+        h("div", null,
+          h("div", {style:{fontFamily:'var(--ui)',fontWeight:600,fontSize:15,color:'var(--tx)'}}, "Nungambakkam"),
+          h("div", {style:{fontFamily:'var(--mono)',fontSize:9.5,color:'var(--tx-soft)',marginTop:4,display:'flex',gap:8,alignItems:'center'}},
+            glyph("pin", {style:{width:11,height:11}}), "Chennai · Mon–Sat 9–19h")),
+        h("button", {className:"btn ghost", onClick:function(){ openWeb(app); }}, "Tour")
+      )
+    ),
+    h("div", {className:"isec"}, "Membership", h("small", null, "Monthly")),
+    h("div", {className:"grid2"},
+      h("div", {className:"plan"},
+        h("div", {className:"pname"}, "Hot Desk"),
+        h("div", {className:"pprice"}, "₹6,000", h("small", null, "/mo")),
+        h("ul", null,
+          h("li", null, "Any open seat"),
+          h("li", null, "Fibre + coffee"),
+          h("li", null, "8 event passes")),
+        h("button", {className:"btn ghost full"}, "Choose")),
+      h("div", {className:"plan feature"},
+        h("div", {className:"pname"}, "Dedicated"),
+        h("div", {className:"pprice"}, "₹11,000", h("small", null, "/mo")),
+        h("ul", null,
+          h("li", null, "Your own desk"),
+          h("li", null, "Locker + storage"),
+          h("li", null, "Meeting room hrs")),
+        h("button", {className:"btn solid full"}, "Choose"))
+    ),
+    h("button", {className:"btn ink full", style:{marginTop:14}, onClick:function(){ openWeb(app); }}, "Book a day pass · ₹600"),
+    h("div", {className:"isec"}, "Happening here", h("small", null, "Soon")),
+    h("div", {className:"stack"},
+      EventRow('bolt', 'TIGHQ Launch', 'Date TBA soon', 'RSVP', true),
+      EventRow('mic', 'Portfolio Night', 'Fri · 18:00', 'Free'),
+      EventRow('people', 'Members Mixer', 'Sat · 16:00', 'Free')
+    )
+  ];
+}
+
+/* ===== Our Work — Hall of Fame ===== */
+function fillColor(f){
+  return ({red:'var(--red)',orange:'var(--orange-deep)',teal:'var(--teal)',plum:'var(--plum)',ink:'var(--ink)'})[f] || 'var(--red)';
+}
+function OurWorkBody(app){
+  var filters = ['All','Campaigns','Events','Branding','Press'];
+  var active = 0;
+  var work = [
+    ['Event','TIGOM open mic · live','plum'],
+    ['Branding','Madras label identity','teal'],
+    ['Campaign','Pongal heritage film','orange'],
+    ['Press','Featured in YourStory','ink'],
+    ['Branding','Indie studio rework','red'],
+    ['Campaign','Chennai street drop','red']
+  ];
+  var chipRow, selLabel;
+  function selectFilter(i){
+    active = i;
+    Array.prototype.forEach.call(chipRow.children, function(c, j){
+      c.className = "chip" + (j === active ? " on" : "");
+    });
+    selLabel.textContent = filters[active];
+  }
+  chipRow = h("div", {className:"chiprow", style:{marginBottom:16}},
+    filters.map(function(f, i){
+      return h("button", {className:"chip" + (i === 0 ? " on" : ""), onClick:function(){ selectFilter(i); }}, f);
+    }));
+  selLabel = h("small", null, filters[active]);
+  return [
+    h("div", {className:"hof-banner"},
+      glyph("trophy", {stroke:'#17266b', style:{width:18,height:18}}),
+      h("span", null, "Hall of Fame"),
+      h("small", null, "Work the community is proudest of")
+    ),
+    chipRow,
+    h("div", {className:"card hof-card", style:{marginBottom:18}},
+      h("div", {className:"hof-medal"}, glyph("trophy", {stroke:'#17266b', style:{width:20,height:20}})),
+      Ph(158, "Featured · case film", true),
+      h("div", {className:"card-pad"},
+        h("div", {style:{fontFamily:'var(--mono)',fontSize:9,letterSpacing:'.14em',textTransform:'uppercase',color:'var(--red-deep)'}}, "Going viral now"),
+        h("div", {style:{fontFamily:'var(--ui)',fontWeight:600,fontSize:17,color:'var(--tx)',marginTop:7,lineHeight:1.1}}, "DoorDash’s delivery bags started a podcast"),
+        h("div", {style:{fontFamily:'var(--ui)',fontSize:12,color:'var(--tx-soft)',marginTop:7,lineHeight:1.4}}, "“Bag Chat” by Clemenger BBDO — animatronic delivery bags riff like a bro-podcast about everything they’ve carried. DoorDash Australia’s scroll-stopping hit."),
+        h("div", {style:{display:'flex',gap:7,marginTop:12,flexWrap:'wrap'}},
+          h("span", {className:"tag accent"}, "DoorDash AU"),
+          h("span", {className:"tag"}, "Clemenger BBDO"),
+          h("span", {className:"tag"}, "Bag Chat")),
+        h("button", {className:"btn solid full", style:{marginTop:14}, onClick:function(){ openWeb({name:'Bag Chat', url:'lbbonline.com'}); }}, "Watch the case film"))
+    ),
+    h("div", {className:"isec"}, "Selected work", selLabel),
+    h("div", {className:"grid2"},
+      work.map(function(item){
+        var cat = item[0], title = item[1], fill = item[2];
+        return h("div", {className:"card", style:{cursor:'pointer'}},
+          Ph(96, cat, fill === 'ink', {}),
+          h("div", {style:{padding:'11px 12px 13px'}},
+            h("div", {style:{width:18,height:3,borderRadius:3,background:fillColor(fill),marginBottom:8}}),
+            h("div", {style:{fontFamily:'var(--ui)',fontWeight:600,fontSize:12.5,color:'var(--tx)',lineHeight:1.15}}, title),
+            h("div", {style:{fontFamily:'var(--mono)',fontSize:8.5,letterSpacing:'.06em',textTransform:'uppercase',color:'var(--tx-faint)',marginTop:6}}, cat)));
+      })
+    ),
+    h("button", {className:"btn ghost full", style:{marginTop:16}, onClick:function(){ openWeb(app); }}, "See all 60+ projects ↗")
+  ];
+}
+
+var INTERIOR_BODY = {hq:HQBody, ourwork:OurWorkBody};
+
+function Interior(app){
+  var Body = INTERIOR_BODY[app.interior];
+  return h("div", {className:"interior fade-up"},
+    IHead(app),
+    h("div", {className:"ibody"}, Body(app))
+  );
+}
+
+/* ===== Socials overlay ===== */
+function Socials(){
+  var links = [
+    {icon:'linkedin', label:'LinkedIn', handle:'The Internet Generation', url:'https://www.linkedin.com/company/13359290/'},
+    {icon:'youtube',  label:'YouTube',  handle:'@theintgen',              url:'https://www.youtube.com/@theintgen'}
+  ];
+  return h("div", {className:"socials"},
+    h("div", {className:"soc-head"},
+      h("button", {className:"iback", "aria-label":"Back", onClick:function(){ set({socials:false}); }}, glyph("back")),
+      h("div", {className:"titles"},
+        h("h2", null, "Socials"),
+        h("p", null, "Follow the community"))
+    ),
+    h("div", {className:"soc-list"},
+      links.map(function(l){
+        return h("a", {className:"soc-row", href:l.url, target:"_blank", rel:"noopener"},
+          h("div", {className:"soc-ic"}, glyph(l.icon, {stroke:'#17266b'})),
+          h("div", {className:"soc-mid"},
+            h("h6", null, l.label),
+            h("p", null, l.handle)),
+          h("div", {className:"larrow"}, glyph("ext", {style:{width:15,height:15}})));
+      })
+    )
+  );
+}
+
+/* ===== Website overlay ===== */
+function WebLayer(app){
+  return h("div", {className:"weblayer"},
+    impCanvas(3.2, "wl-imp"),
+    h("div", {className:"wl-name"}, app.name),
+    h("div", {className:"wl-url"}, app.url || (app.name.toLowerCase().replace(/[^a-z]/g,'') + '.co')),
+    h("div", {className:"wl-hint"}, h("span", {className:"spinner"}), "Opening website"),
+    h("button", {className:"wl-close", onClick:function(){ set({web:null}); }}, "Back to TIG OS")
+  );
+}
+
+/* ===== Dock + soft keys ===== */
+function Dock(){
+  return h("div", {className:"dock"},
+    h("button", {onClick:function(){ set({socials:true}); }},
+      h("div", {className:"di"}, glyph("heart")),
+      h("span", null, "Socials")),
+    h("button", {onClick:function(){ openWeb({name:'About', url:'theintgen.com/about'}); }},
+      h("div", {className:"di"}, glyph("info")),
+      h("span", null, "About")),
+    h("button", {onClick:function(){ openWeb({name:'Contact', url:'theintgen.com/say-hi'}); }},
+      h("div", {className:"di"}, glyph("mail")),
+      h("span", null, "Contact"))
+  );
+}
+function SoftKeys(){
+  return h("div", {className:"softrow"},
+    h("button", {"aria-label":"Back", onClick:back}, glyph("back")),
+    h("button", {"aria-label":"Home", onClick:goHome}, glyph("home")),
+    h("button", {"aria-label":"Menu"}, glyph("menu")),
+    h("button", {"aria-label":"Search"}, glyph("search"))
+  );
+}
+
+/* ===== render ===== */
+function render(){
+  var viewport = h("div", {className:"viewport"});
+
+  if(state.view === 'lock'){
+    append(viewport, Lock());
+  } else {
+    append(viewport, h("div", {className:"home"},
+      h("div", {className:"home-bg"}),
+      h("div", {style:{position:'relative',flex:1,overflow:'hidden',display:'flex',flexDirection:'column'}},
+        HomePage1()),
+      Dock()
+    ));
+  }
+  if(state.interiorId) append(viewport, Interior(APPS[state.interiorId]));
+  if(state.socials) append(viewport, Socials());
+  if(state.web) append(viewport, WebLayer(state.web));
+
+  var device = h("div", {className:"device"},
+    h("div", {className:"screen"}, viewport),
+    SoftKeys()
+  );
+
+  var root = document.getElementById("app");
+  root.innerHTML = "";
+  root.appendChild(device);
+}
+
+render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Internet Generation — TIG Ecosystem</title>
+<meta name="description" content="The Internet Generation (TIG) — Digital Marketing, Content, Podcasts, Open Mic & Freelance Gigs. Chennai's creative ecosystem."/>
+<link rel="icon" type="image/png" href="/public/assets/logo-theintgen.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --navy:   #1A0A3C;
+    --yellow: #FFD600;
+    --crimson:#9B1C3A;
+    --white:  #FFFFFF;
+    --offwhite: #F7F5F2;
+    --card-bg: #FFFFFF;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 60px;
+    background: rgba(26, 10, 60, 0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+
+  nav img { height: 32px; width: auto; object-fit: contain; }
+
+  nav a {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--yellow); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 1.5rem 4rem;
+    z-index: 1;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3rem, 10vw, 8rem);
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    color: var(--white);
+    opacity: 0;
+    animation: fadeUp 0.7s 0.35s forwards;
+  }
+
+  .hero h1 span { color: var(--yellow); }
+
+  .hero-sub {
+    margin-top: 2rem;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    font-weight: 300;
+    color: rgba(255,255,255,0.55);
+    max-width: 480px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.5s forwards;
+  }
+
+  /* ── GLOW BLOB ── */
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .blob-yellow {
+    width: 400px; height: 400px;
+    background: rgba(255, 214, 0, 0.12);
+    top: 10%; left: 50%;
+    transform: translateX(-50%);
+  }
+  .blob-crimson {
+    width: 300px; height: 300px;
+    background: rgba(155, 28, 58, 0.15);
+    bottom: 20%; right: 5%;
+  }
+
+  /* ── BRANDS GRID ── */
+  .brands-section {
+    position: relative;
+    z-index: 1;
+    padding: 2rem 1.5rem 6rem;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .brands-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .brands-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .brands-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  .brand-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 1.5rem 1.25rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    text-decoration: none;
+    color: var(--white);
+    transition: background 0.25s, border-color 0.25s, transform 0.25s;
+    min-height: 160px;
+    cursor: pointer;
+    opacity: 0;
+    animation: fadeUp 0.6s forwards;
+  }
+
+  .brand-card:nth-child(1) { animation-delay: 0.6s; }
+  .brand-card:nth-child(2) { animation-delay: 0.7s; }
+  .brand-card:nth-child(3) { animation-delay: 0.8s; }
+  .brand-card:nth-child(4) { animation-delay: 0.9s; }
+
+  .brand-card:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255, 214, 0, 0.3);
+    transform: translateY(-4px);
+  }
+
+  .brand-card.coming-soon {
+    opacity: 0.5 !important;
+    cursor: default;
+    pointer-events: none;
+    animation-delay: 0.75s;
+  }
+  .brand-card.coming-soon:nth-child(3) { animation-delay: 0.8s; }
+  .brand-card.coming-soon:nth-child(4) { animation-delay: 0.85s; }
+
+  .brand-pill {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .pill-live { background: rgba(255,214,0,0.15); color: var(--yellow); }
+  .pill-soon { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.4); }
+
+  .brand-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.4rem;
+  }
+
+  .brand-desc {
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .brand-arrow {
+    margin-top: 1.25rem;
+    font-size: 0.8rem;
+    color: var(--yellow);
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .brand-card:hover .brand-arrow { opacity: 1; transform: translateX(4px); }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding: 2rem 1.5rem;
+    text-align: center;
+  }
+
+  footer p {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 0.05em;
+  }
+
+  footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
+  footer a:hover { color: var(--yellow); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <img src="/public/assets/logo-theintgen.png" alt="The Internet Generation"/>
+  <a href="mailto:hi@theintgen.com">hi@theintgen.com</a>
+</nav>
+
+<section class="hero">
+  <div class="blob blob-yellow"></div>
+  <div class="blob blob-crimson"></div>
+
+  <p class="hero-eyebrow">The Internet Generation &nbsp;·&nbsp; Chennai</p>
+  <h1>THE<br/><span>INT</span><br/>GEN</h1>
+  <p class="hero-sub">Digital Marketing · Video Production · Influencer Marketing · And a whole lot more.</p>
+</section>
+
+<section class="brands-section">
+  <p class="brands-label">Our Ecosystem</p>
+  <div class="brands-grid">
+
+    <a href="/tigital/" class="brand-card">
+      <span class="brand-pill pill-live">Live</span>
+      <div>
+        <p class="brand-name">Tigital</p>
+        <p class="brand-desc">Digital marketing knowledge hub. Free tools, guides & resources.</p>
+      </div>
+      <span class="brand-arrow">Explore →</span>
+    </a>
+
+    <a href="/tiggigs/" class="brand-card">
+      <span class="brand-pill pill-live">Live</span>
+      <div>
+        <p class="brand-name">TigGigs</p>
+        <p class="brand-desc">Freelance job board for creative professionals in the TIG network.</p>
+      </div>
+      <span class="brand-arrow">Explore →</span>
+    </a>
+
+    <div class="brand-card coming-soon">
+      <span class="brand-pill pill-soon">Coming Soon</span>
+      <div>
+        <p class="brand-name">TigPods</p>
+        <p class="brand-desc">Podcast homepage — conversations with Chennai's creative community.</p>
+      </div>
+    </div>
+
+    <div class="brand-card coming-soon">
+      <span class="brand-pill pill-soon">Coming Soon</span>
+      <div>
+        <p class="brand-name">Tigom</p>
+        <p class="brand-desc">Open mic platform — 42+ editions & counting.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 The Internet Generation · T. Nagar, Chennai &nbsp;·&nbsp; <a href="mailto:hi@theintgen.com">hi@theintgen.com</a></p>
+</footer>
+
+</body>
+</html>
