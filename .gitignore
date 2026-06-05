@@ -8,3 +8,12 @@ Icon?
 # Editor
 .vscode/
 .idea/
+
+# Wrangler local cache
+.wrangler/
+
+# Subsite local copies (each has its own GitHub repo)
+tiggigs/
+tigital/
+tigom/
+tigpods/
